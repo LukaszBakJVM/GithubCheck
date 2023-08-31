@@ -1,12 +1,16 @@
-package com.example.githubcheck;
+package com.example.githubcheck.Model;
+
+
+
+
 
 import java.util.List;
 
 public class Repository {
-    private String name;
-    private String owner;
-    private boolean fork;
 
+    private String name;
+    private Owner owner;
+    private boolean fork;
     private List<Branch>branches;
 
     public String getName() {
@@ -17,11 +21,11 @@ public class Repository {
         this.name = name;
     }
 
-    public String getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 
@@ -32,8 +36,6 @@ public class Repository {
     public void setFork(boolean fork) {
         this.fork = fork;
     }
-
-
 
     public List<Branch> getBranches() {
         return branches;
