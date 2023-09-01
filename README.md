@@ -1,11 +1,11 @@
 
 GitHub repositories searcher
-This is GitHub repositories searcher web app (Atipera task)
+
 
 Tech Stack
 Language: Java 17
 
-Frameworks: Spring Boot 3.12
+Frameworks: Spring Boot 3.1.3
 
 Build tool: Maven
 
@@ -15,63 +15,35 @@ UI: REST API
 
 API Reference
 Get repos which are not forks, with branches by username
-  GET /api/repos/{username}/fork=false?pageSize=&pageNumber=
+  GET /repositories/{username}/fork=false
 Parameter	Type	Description
 username	string	Required
-pageSize	int	Required
-pageNumber	int	Required
 Example response
-[
-    {
-        "repositoryName":"git-consortium",
-        "ownerLogin":"octocat",
+[ {
+        "name": "DailyCodingProblem-Problem-46-Hard",
+        "owner": {
+            "login": "LukaszBakJVM"
+        },
         "fork": false,
-        "branches":[
+        "branches": [
             {
-                "name":"master",
-                "lastCommitSha":"b33a9c7c02ad93f621fa38f0e9fc9e867e12fa0e"
+                "name": "master",
+                "commit": {
+                    "sha": "8d9ed9b06f7de6a889469d5a0c3da338e63db694"
+                }
             }
         ]
     },
-    {
-        "repositoryName":"hello-worId",
-        "ownerLogin":"octocat",
-        "fork": false,
-        "branches":[
-            {
-                "name":"master",
-                "lastCommitSha":"7e068727fdb347b685b658d2981f8c85f7bf0585"
-            }
-        ]
-    },
-    {
-        "repositoryName":"Hello-World",
-        "ownerLogin":"octocat",
-        "fork": false,
-        "branches":[
-            {
-                "name":"master",
-                "lastCommitSha":"7fd1a60b01f91b314f59955a4e4d4e80d8edf11d"
-            },
-            {
-                "name":"octocat-patch-1",
-                "lastCommitSha":"b1b3f9723831141a31a1a7252a213e216ea76e56"
-            },
-            {
-                "name":"test",
-                "lastCommitSha":"b3cbd5bbd7e81436d2eee04537ea2b4c0cad4cdf"
-            }
-        ]
-    }
+    
 ]
 Errors
 1.Given non existing GitHub user you will get:
 {
   "status" : "NOT_FOUND",
-  "message" : "User not found"
+  "message" : "User {username} not found"
 }
 2.Given application/xml Accept header you will get:
 {
   "status" : "NOT_ACCEPTABLE",
-  "message" : "No acceptable representation"
+  "message" : "No acceptable format"
 }
