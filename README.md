@@ -14,7 +14,7 @@ APIs: GitHub API
 UI: REST API
 
 API Reference
-Get repos which are not forks, with branches by username
+Get repos which are not forks, with branches by username    
   GET /repositories/{username}/fork=false
 Parameter	Type	Description
 username	string	Required
