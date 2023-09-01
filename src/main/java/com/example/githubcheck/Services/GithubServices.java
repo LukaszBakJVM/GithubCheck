@@ -1,4 +1,4 @@
-package com.example.githubcheck;
+package com.example.githubcheck.Services;
 
 
 import com.example.githubcheck.Exceptions.NotAcceptableException;
@@ -27,10 +27,10 @@ public class GithubServices {
                 .uri("/users/{username}/repos", username)
                 .header("Accept", "application/json")
                 .retrieve()
-                .onStatus(status->status.equals(HttpStatus.NOT_FOUND),
-                   clientResponse ->      Mono.error(new UserNotFoundException()))
+                . onStatus(status->status.equals(HttpStatus.NOT_FOUND),
+                        clientResponse -> Mono.error(new UserNotFoundException(" User with that username was not found")))
                 .onStatus(status->status.equals(HttpStatus.NOT_ACCEPTABLE),
-                        clientResponse -> Mono.error(new NotAcceptableException()))
+                        clientResponse -> Mono.error(new NotAcceptableException("Not Acceptable")))
                 .bodyToFlux(Repository.class)
                 .filter(repository -> !repository.isFork())
                 .flatMap(repository -> getBranchesForRepository(username, repository.getName())
