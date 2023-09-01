@@ -30,13 +30,13 @@ public class GithubServices {
                 .retrieve()
                .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     if (response.statusCode() == HttpStatus.NOT_FOUND) {
-                        return Mono.error(  new UserNotFoundException() );
+                        return Mono.error(  new UserNotFoundException("User "+username+" not found") );
                     }
                     return Mono.empty();
                 })
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     if (response.statusCode() == HttpStatus.NOT_ACCEPTABLE) {
-                        return Mono.error(new NotAcceptableException() );
+                      return Mono.error(new NotAcceptableException("No acceptable format"));
                     }
                     return Mono.empty();
                 })
