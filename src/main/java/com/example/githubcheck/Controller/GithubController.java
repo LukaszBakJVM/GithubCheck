@@ -1,13 +1,9 @@
 package com.example.githubcheck.Controller;
 
 import com.example.githubcheck.Services.GithubServices;
-
 import com.example.githubcheck.Model.Repository;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-
 
 
 
@@ -19,9 +15,10 @@ public class GithubController {
     public GithubController(GithubServices services) {
         this.services = services;
     }
-    @GetMapping("/{username}")
-    public ResponseEntity<Flux<Repository>> getGithubRepositories(@PathVariable String username) {
-        return ResponseEntity.ok(services.getUserRepositories(username));
+    @GetMapping("/{username}/fork=false")
+    public Flux<Repository> getGithubRepositories(@PathVariable String username) {
+
+        return services.getUserRepositories(username);
     }
 
 

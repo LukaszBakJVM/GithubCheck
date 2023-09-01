@@ -6,6 +6,7 @@ import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Branch;
 import com.example.githubcheck.Model.Repository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -27,10 +28,18 @@ public class GithubServices {
                 .uri("/users/{username}/repos", username)
                 .header("Accept", "application/json")
                 .retrieve()
-                . onStatus(status->status.equals(HttpStatus.NOT_FOUND),
-                        clientResponse -> Mono.error(new UserNotFoundException(" User with that username was not found")))
-                .onStatus(status->status.equals(HttpStatus.NOT_ACCEPTABLE),
-                        clientResponse -> Mono.error(new NotAcceptableException("Not Acceptable")))
+               .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    if (response.statusCode() == HttpStatus.NOT_FOUND) {
+                        return Mono.error(  new UserNotFoundException() );
+                    }
+                    return Mono.empty();
+                })
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    if (response.statusCode() == HttpStatus.NOT_ACCEPTABLE) {
+                        return Mono.error(new NotAcceptableException() );
+                    }
+                    return Mono.empty();
+                })
                 .bodyToFlux(Repository.class)
                 .filter(repository -> !repository.isFork())
                 .flatMap(repository -> getBranchesForRepository(username, repository.getName())
