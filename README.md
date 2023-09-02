@@ -82,7 +82,7 @@ http
 
 ```json
 {
-  "status" : "NOT_ACCEPTABLE",
+  "status" : "406 Not Acceptable",
   "message" : "No acceptable format"
 }
 ```
