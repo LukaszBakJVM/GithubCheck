@@ -1,51 +1,90 @@
+# GitHub repositories searcher
 
-GitHub repositories searcher
+This is GitHub repositories searcher 
 
 
-Tech Stack
-Language: Java 17
+## Tech Stack
 
-Frameworks: Spring Boot 3.1.3
+**Language:** Java 17
 
-Build tool: Maven
+**Frameworks:** Spring Boot 3.1.3
 
-APIs: GitHub API
+**Build tool:** Maven
 
-UI: REST API
+**APIs:** GitHub API
 
-API Reference
-Get repos which are not forks, with branches by username
-GET /repositories/{username}/fork=false
-Parameter	Type	Description
-username	string	Required
+**UI:** REST API
 
-Example response
-[
-{
-"name": "DailyCodingProblem-Problem-46-Hard",
-"owner": {
-"login": "LukaszBakJVM"
+
+
+
+## API Reference
+
+#### Get all repos which are not forks, with branches by username
+
+```http
+  GET /repositories/{username}/fork=false
+  
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `username` | `string` | **Required** |
+
+
+## Example response
+
+```json
+[{
+  "name": "DailyCodingProblemProblem35Hard",
+  "owner": {
+    "login": "LukaszBakJVM"
+  },
+  "fork": false,
+  "branches": [
+    {
+      "name": "master",
+      "commit": {
+        "sha": "9ca302f081e8ed3d36af75db862d6fa6cd34219c"
+      }
+    }
+  ]
 },
-"fork": false,
-"branches": [
-{
-"name": "master",
-"commit": {
-"sha": "8d9ed9b06f7de6a889469d5a0c3da338e63db694"
-}
-}
-]
-}
+  {
+    "name": "DailyCodingProblemProblem-88-Medium",
+    "owner": {
+      "login": "LukaszBakJVM"
+    },
+    "fork": false,
+    "branches": [
+      {
+        "name": "master",
+        "commit": {
+          "sha": "5ffc46d75247051049389f0e33135f91e6758b3a"
+        }
+      }
+    ]
+  
+,
+  
+```
 
-]
-Errors
-1.Not found GitHub user you will get:
+## Errors
+
+### 1.Case user not found :
+
+```json
 {
-"status" : "NOT_FOUND",
-"message" : ""User {username} not found"
+  "status" : "404 Not Found",
+  "message" : "User {username} not found"
 }
-2.Given application/xml Accept header you will get:
+```
+
+### 2.Case application/xml Accept header you will get:
+
+```json
 {
-"status" : "NOT_ACCEPTABLE",
-"message" : "No acceptable format"
+  "status" : "NOT_ACCEPTABLE",
+  "message" : "No acceptable format"
 }
+```
