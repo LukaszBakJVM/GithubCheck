@@ -21,11 +21,9 @@ This is GitHub repositories searcher
 ## API Reference
 
 #### Get all repos which are not forks, with branches by username
-
-```http
+http
   GET /repositories/{username}/fork=false
   
-```
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
@@ -50,7 +48,7 @@ This is GitHub repositories searcher
     }
   ]
 },
-  {
+  [,{
     "name": "DailyCodingProblemProblem-88-Medium",
     "owner": {
       "login": "LukaszBakJVM"
