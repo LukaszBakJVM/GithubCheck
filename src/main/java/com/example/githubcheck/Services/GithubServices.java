@@ -14,7 +14,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Objects;
 
+import static org.springframework.http.HttpStatus.*;
 
 
 @Service
@@ -26,34 +29,24 @@ public class GithubServices {
         this.webClient = webBuilder.build();
 
     }
+//
 
-
-    public Flux<Repository> getUserRepositories(String username) {
+    public Mono<List<Repository>> getUserRepositories(String username) {
         return webClient.get()
                 .uri("/users/{username}/repos", username)
                 .header("Accept", "application/json")
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    if (response.statusCode() == HttpStatus.NOT_FOUND) {
-                        return Mono.error(  new UserNotFoundException("User "+username+" not found") );
-                    }
-                    return Mono.empty();
-                })
-                .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    if (response.statusCode() == HttpStatus.NOT_ACCEPTABLE) {
-                        return Mono.error(new NotAcceptableException("No acceptable format"));
-                    }
-                    return Mono.empty();
-                })
                 .bodyToFlux(Repository.class)
                 .filter(repository -> !repository.fork())
-                .flatMap(repository -> getBranchesForRepository(username, repository.name())
+                .flatMap(repository -> getBranchesForRepository(username,repository.name())
                         .collectList()
-                        .map(branches -> repository));
+                        .map(branches -> repository))
+                .collectList();
 
 
 
     }
+
 
     private Flux<Branch> getBranchesForRepository(String username, String repositoryName) {
         return webClient
