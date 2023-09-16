@@ -24,7 +24,7 @@ public class GithubServices {
         this.webClient = webBuilder.build();
 
     }
-//
+
 
     public Flux<Repository> getUserRepositories(String username) {
         return webClient.get()
@@ -35,18 +35,21 @@ public class GithubServices {
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     if (response.statusCode() == HttpStatusCode.valueOf(404)) {
                         return Mono.error(  new UserNotFoundException("User "+username+" not found") );
-                    }
-                    return Mono.empty();
-                })
-                .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    if (response.statusCode() == HttpStatusCode.valueOf(406)) {
+                    } else if (response.statusCode()==HttpStatusCode.valueOf(406)) {
                         return Mono.error(new NotAcceptableException("No acceptable format"));
+
                     }
-                    return Mono.empty();
-                }).bodyToFlux(Repository.class).filter(repository -> !repository.isFork()).flatMap(repository -> this.getBranchesForRepository(username, repository.getName()).collectList().map(branches -> {
-                    repository.setBranches(branches);
-                    return repository;
-                }));
+                    return Mono.error(Throwable::new);
+
+                }).bodyToFlux(Repository.class)
+                .filter(repository -> !repository.isFork())
+                .flatMap(repository -> this.getBranchesForRepository(username,repository.getName())
+                        .collectList()
+                        .map(branches -> {repository.setBranches(branches);
+                        return repository;}));
+
+
+
     }
 
     private Flux<Branch> getBranchesForRepository(String username, String repositoryName) {
