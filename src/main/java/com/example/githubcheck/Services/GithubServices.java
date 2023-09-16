@@ -37,7 +37,7 @@ public class GithubServices {
                         return Mono.error(  new UserNotFoundException("User "+username+" not found") );
                     } else if (response.statusCode()==HttpStatusCode.valueOf(406)) {
                         return Mono.error(new NotAcceptableException("No acceptable format"));
-
+//
                     }
                     return Mono.error(Throwable::new);
 
