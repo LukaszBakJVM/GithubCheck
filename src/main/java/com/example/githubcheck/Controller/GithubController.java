@@ -7,7 +7,8 @@ import com.example.githubcheck.Services.GithubServices;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.CorePublisher;
+import reactor.core.publisher.Mono;
+import java.util.List;
 
 
 @RestController
@@ -20,9 +21,9 @@ public class GithubController {
     }
 
     @GetMapping("/{username}/fork=false")
-    public ResponseEntity<CorePublisher<Repository>> getGithubRepositories(@PathVariable String username) {
+    public ResponseEntity<Mono<List<Repository>>> getGithubRepositories(@PathVariable String username) {
         try {
-            CorePublisher<Repository> userRepositories = services.getUserRepositories(username);
+            Mono<List<Repository>> userRepositories = services.getUserRepositories(username);
             return ResponseEntity.ok(userRepositories);
         } catch (UserNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

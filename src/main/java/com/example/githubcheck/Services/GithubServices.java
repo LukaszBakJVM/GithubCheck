@@ -6,12 +6,15 @@ import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Branch;
 import com.example.githubcheck.Model.Repository;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Flux;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 
 
 
@@ -26,38 +29,44 @@ public class GithubServices {
     }
 
 
-    public Flux<Repository> getUserRepositories(String username) {
+    public Mono<List<Repository>> getUserRepositories(String username) {
         return webClient.get()
                 .uri("/users/{username}/repos", username)
                 .header("Accept", "application/json")
                 .retrieve()
-
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    if (response.statusCode() == HttpStatusCode.valueOf(404)) {
-                        return Mono.error(  new UserNotFoundException("User "+username+" not found") );
-                    } else if (response.statusCode()==HttpStatusCode.valueOf(406)) {
+                    if (response.statusCode() == HttpStatus.NOT_FOUND) {
+                        return Mono.error(new UserNotFoundException("User " + username + " not found"));
+                    } else if (response.statusCode() == HttpStatus.NOT_ACCEPTABLE) {
                         return Mono.error(new NotAcceptableException("No acceptable format"));
-//
                     }
-                    return Mono.error(Throwable::new);
+                    return response.createException();
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {})
+                .flatMap(repositories ->
+                        Flux.fromIterable(repositories)
+                                .filter(repository -> !repository.isFork())
+                                .flatMap(repository ->
+                                        this.getBranchesForRepository(username, repository.getName())
+                                                .collectList()
 
-                }).bodyToFlux(Repository.class)
-                .filter(repository -> !repository.isFork())
-                .flatMap(repository -> this.getBranchesForRepository(username,repository.getName())
-                        .collectList()
-                        .map(branches -> {repository.setBranches(branches);
-                        return repository;}));
 
-
-
+                                                .map(branches -> {
+                                                    repository.setBranches(branches);
+                                                    return repository;
+                                                })
+                                )
+                                .collectList()
+                );
     }
 
-    private Flux<Branch> getBranchesForRepository(String username, String repositoryName) {
+    private Flux<Branch>getBranchesForRepository(String username, String repositoryName) {
         return webClient
                 .get()
                 .uri("/repos/{username}/{repositoryName}/branches", username, repositoryName)
                 .retrieve()
                 .bodyToFlux(Branch.class);
+
     }
 }
 

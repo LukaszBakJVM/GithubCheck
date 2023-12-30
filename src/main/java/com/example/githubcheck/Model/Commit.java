@@ -3,15 +3,6 @@ package com.example.githubcheck.Model;
 
 
 
-public class Commit {
-    private String sha;
+public record Commit (String sha) {
 
-
-    public String getSha() {
-        return sha;
-    }
-
-    public void setSha(String sha) {
-        this.sha = sha;
-    }
 }
