@@ -1,7 +1,8 @@
 package com.example.githubcheck.Services;
 
 
-import com.example.githubcheck.Exceptions.NotAcceptableException;
+
+import com.example.githubcheck.Exceptions.UnknownErrorException;
 import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Branch;
 import com.example.githubcheck.Model.Repository;
@@ -37,10 +38,8 @@ public class GithubServices {
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     if (response.statusCode() == HttpStatus.NOT_FOUND) {
                         return Mono.error(new UserNotFoundException("User " + username + " not found"));
-                    } else if (response.statusCode() == HttpStatus.NOT_ACCEPTABLE) {
-                        return Mono.error(new NotAcceptableException("No acceptable format"));
                     }
-                    return response.createException();
+                    return Mono.error(new UnknownErrorException());
                 })
                 .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {})
                 .flatMap(repositories ->
