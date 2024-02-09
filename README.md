@@ -5,7 +5,7 @@ This is GitHub repositories searcher
 
 ## Tech Stack
 
-**Language:** Java 17
+**Language:** Java 21
 
 **Frameworks:** Spring Boot 3.1.3
 
@@ -78,11 +78,4 @@ http
 }
 ```
 
-### 2.Case application/xml Accept header you will get:
 
-```json
-{
-  "status" : "406 Not Acceptable",
-  "message" : "No acceptable format"
-}
-```
