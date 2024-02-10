@@ -17,11 +17,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 class GithubServicesTestTest {
     private final String username = "someUsername";
     private WebTestClient webTestClient;
-    private  final String BASE_URL = "http://localhost:8080";
 
 
     @BeforeEach
     void setUp() {
+        String BASE_URL = "http://localhost:8080";
         webTestClient = WebTestClient.bindToServer().baseUrl(BASE_URL).build();
     }
 
