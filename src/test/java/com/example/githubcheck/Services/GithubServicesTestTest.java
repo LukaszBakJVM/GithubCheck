@@ -1,6 +1,7 @@
 package com.example.githubcheck.Services;
 
 
+
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.AfterEach;
@@ -14,9 +15,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @WireMockTest(httpPort = 8080)
 
+
 class GithubServicesTestTest {
-    private final String username = "someUsername";
+    private final String username = "username";
     private WebTestClient webTestClient;
+
 
 
     @BeforeEach
@@ -83,7 +86,14 @@ class GithubServicesTestTest {
                 .expectBody(String.class)
                 .consumeWith(response -> assertNotEquals("User " + username + " not found", response.getResponseBody()));
     }
+
+
+
 }
+
+
+
+
 
 
 
