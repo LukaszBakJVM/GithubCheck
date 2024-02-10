@@ -2,13 +2,14 @@ package com.example.githubcheck.Services;
 
 
 
-import com.example.githubcheck.Exceptions.UnknownErrorException;
+
 import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Branch;
 import com.example.githubcheck.Model.Repository;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class GithubServices {
                     if (response.statusCode() == HttpStatus.NOT_FOUND) {
                         return Mono.error(new UserNotFoundException("User " + username + " not found"));
                     }
-                    return Mono.error(new UnknownErrorException());
+                    return Mono.error(new ResponseStatusException(response.statusCode()));
                 })
                 .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {})
                 .flatMap(repositories ->
