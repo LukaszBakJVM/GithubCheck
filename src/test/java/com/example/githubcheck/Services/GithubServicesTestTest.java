@@ -5,25 +5,16 @@ package com.example.githubcheck.Services;
 import com.example.githubcheck.Controller.GithubController;
 import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Repository;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.junit.jupiter.api.AfterEach;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-@WireMockTest(httpPort = 8080)
+
+
 
 @SpringBootTest
 class GithubServicesTestTest {
@@ -31,41 +22,85 @@ class GithubServicesTestTest {
 
     @Autowired
     GithubController githubController;
-    GithubServices githubServices = mock(GithubServices.class);
 
 
 
-    @BeforeEach
-    void setUp() {
-        String BASE_URL = "http://localhost:8080";
 
-    }
 
-    @AfterEach
-    void tearDown() {
-        WireMock.reset();
-    }
     @Test
-    public void testGetUserRepositoriesSuccess() {
-         String username = "baranc";
-        List<Repository> repositories = TestHelper.sampleGithubRepository(TestHelper.json);
-        Mono<List<Repository>> just = Mono.just(repositories);
+    public void testGetUserRepositoriesSuccessNameRepositoryOctocatGithubIo() {
+        // given
+         String username = "octocat";
 
-
-
-        when(githubServices.getUserRepositories(username)).thenReturn(just);
+        // when
         Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-        List<Repository> block = githubRepositories.block();
-        System.out.println(block.toString());
 
 
+        // then
+        assert githubRepositories != null;
         StepVerifier.create(githubRepositories)
-
-                .expectNext(TestHelper.sampleGithubRepository(TestHelper.json))
+                .expectNextMatches(repositories -> repositories.stream()
+                        .anyMatch(repository ->
+                                "octocat".equals(repository.getOwner().login()) &&
+                                        "octocat.github.io".equals(repository.getName()) &&
+                                        !repository.isFork() &&
+                                        repository.getBranches().stream().anyMatch(branch ->
+                                                "gh-pages".equals(branch.name()) &&
+                                                        "c0e4a095428f36b81f0bd4239d353f71918cbef3".equals(branch.commit().sha())
+                                        )
+                        ))
                 .expectComplete()
                 .verify();
+    }
+    @Test
+    public void testGetUserRepositoriesSuccessNameRepositoryHelloWorld() {
+        // given
+        String username = "octocat";
+
+        // when
+        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
 
 
+        // then
+        assert githubRepositories != null;
+        StepVerifier.create(githubRepositories)
+                .expectNextMatches(repositories -> repositories.stream()
+                        .anyMatch(repository ->
+                                "octocat".equals(repository.getOwner().login()) &&
+                                        "Hello-World".equals(repository.getName()) &&
+                                        !repository.isFork() &&
+                                        repository.getBranches().stream().anyMatch(branch ->
+                                                "master".equals(branch.name()) &&
+                                                        "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d".equals(branch.commit().sha())
+                                        )
+                        ))
+                .expectComplete()
+                .verify();
+    }
+    @Test
+    public void testGetUserRepositoriesSuccessNameRepositorySpoonKnife() {
+        // given
+        String username = "octocat";
+
+        // when
+        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
+
+
+        // then
+        assert githubRepositories != null;
+        StepVerifier.create(githubRepositories)
+                .expectNextMatches(repositories -> repositories.stream()
+                        .anyMatch(repository ->
+                                "octocat".equals(repository.getOwner().login()) &&
+                                        "Spoon-Knife".equals(repository.getName()) &&
+                                        !repository.isFork() &&
+                                        repository.getBranches().stream().anyMatch(branch ->
+                                                "change-the-title".equals(branch.name()) &&
+                                                        "f439fc5710cd87a4025247e8f75901cdadf5333d".equals(branch.commit().sha())
+                                        )
+                        ))
+                .expectComplete()
+                .verify();
     }
 
 
@@ -73,12 +108,13 @@ class GithubServicesTestTest {
 
     @Test
     void testGetUserRepositoriesNotFound() {
-       String username = "baranczzzz";
-        when(githubServices.getUserRepositories(username))
-                .thenThrow(WebClientResponseException.NotFound.class);
+        // given
+       String username = "whenUserNotFound";
 
+        // when
         Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-
+        // then
+        assert githubRepositories != null;
         StepVerifier.create(githubRepositories)
                 .expectError(UserNotFoundException.class)
                 .verify();
