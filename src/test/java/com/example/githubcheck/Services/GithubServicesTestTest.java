@@ -2,94 +2,96 @@ package com.example.githubcheck.Services;
 
 
 
+import com.example.githubcheck.Controller.GithubController;
+import com.example.githubcheck.Exceptions.UserNotFoundException;
+import com.example.githubcheck.Model.Repository;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.AfterEach;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @WireMockTest(httpPort = 8080)
 
-
+@SpringBootTest
 class GithubServicesTestTest {
-    private final String username = "username";
-    private WebTestClient webTestClient;
+
+
+    @Autowired
+    GithubController githubController;
+    GithubServices githubServices = mock(GithubServices.class);
 
 
 
     @BeforeEach
     void setUp() {
         String BASE_URL = "http://localhost:8080";
-        webTestClient = WebTestClient.bindToServer().baseUrl(BASE_URL).build();
+
     }
 
     @AfterEach
     void tearDown() {
         WireMock.reset();
     }
-
     @Test
-    void testGetUserRepositoriesSuccess() {
+    public void testGetUserRepositoriesSuccess() {
+         String username = "baranc";
+        List<Repository> repositories = TestHelper.sampleGithubRepository(TestHelper.json);
+        Mono<List<Repository>> just = Mono.just(repositories);
 
-        stubFor(get(urlEqualTo("/repositories/" + username + "/fork=false"))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(TestHelper.sampleGithubRepositoryJson())
-                        .withStatus(200)));
 
-        webTestClient.get()
-                .uri("/repositories/" + username + "/fork=false")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .isEqualTo(TestHelper.sampleGithubRepositoryJson());
+
+        when(githubServices.getUserRepositories(username)).thenReturn(just);
+        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
+        List<Repository> block = githubRepositories.block();
+        System.out.println(block.toString());
+
+
+        StepVerifier.create(githubRepositories)
+
+                .expectNext(TestHelper.sampleGithubRepository(TestHelper.json))
+                .expectComplete()
+                .verify();
+
 
     }
+
+
+
 
     @Test
     void testGetUserRepositoriesNotFound() {
+       String username = "baranczzzz";
+        when(githubServices.getUserRepositories(username))
+                .thenThrow(WebClientResponseException.NotFound.class);
 
+        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
 
-        stubFor(get(urlEqualTo("/repositories/" + username + "/fork=false"))
-                .willReturn(aResponse()
-                        .withStatus(404).withBody("User " + username + " not found")));
-
-         webTestClient.get()
-                .uri("/repositories/" + username + "/fork=false")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                 .expectStatus().isNotFound()
-                 .expectBody(String.class)
-                 .isEqualTo("User " + username + " not found");
-
+        StepVerifier.create(githubRepositories)
+                .expectError(UserNotFoundException.class)
+                .verify();
 
     }
-    @Test
-    void testGetUserRepositoriesBadRequest() {
-        stubFor(get(urlEqualTo("/repositories/" + username + "/fork=false"))
-                .willReturn(aResponse()
-                        .withStatus(405)
-                        .withBody("Method Not Allowed")
-                        .withHeader("Content-Type", "application/json")));
 
-        webTestClient.get()
-                .uri("/repositories/" + username + "/fork=false")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().is4xxClientError()
-                .expectBody(String.class)
-                .consumeWith(response -> assertNotEquals("User " + username + " not found", response.getResponseBody()));
+
+
     }
 
 
 
-}
+
 
 
 
