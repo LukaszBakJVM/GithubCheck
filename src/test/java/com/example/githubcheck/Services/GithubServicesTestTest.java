@@ -41,8 +41,8 @@ class GithubServicesTestTest {
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
                         .anyMatch(repository ->
+                                "octocat.github.io".equals(repository.getName()) &&
                                 "octocat".equals(repository.getOwner().login()) &&
-                                        "octocat.github.io".equals(repository.getName()) &&
                                         !repository.isFork() &&
                                         repository.getBranches().stream().anyMatch(branch ->
                                                 "gh-pages".equals(branch.name()) &&
@@ -66,8 +66,8 @@ class GithubServicesTestTest {
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
                         .anyMatch(repository ->
+                                "Hello-World".equals(repository.getName()) &&
                                 "octocat".equals(repository.getOwner().login()) &&
-                                        "Hello-World".equals(repository.getName()) &&
                                         !repository.isFork() &&
                                         repository.getBranches().stream().anyMatch(branch ->
                                                 "master".equals(branch.name()) &&
@@ -90,10 +90,9 @@ class GithubServicesTestTest {
         assert githubRepositories != null;
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->
+                        .anyMatch(repository ->"Spoon-Knife".equals(repository.getName()) &&
                                 "octocat".equals(repository.getOwner().login()) &&
-                                        "Spoon-Knife".equals(repository.getName()) &&
-                                        !repository.isFork() &&
+                                !repository.isFork() &&
                                         repository.getBranches().stream().anyMatch(branch ->
                                                 "change-the-title".equals(branch.name()) &&
                                                         "f439fc5710cd87a4025247e8f75901cdadf5333d".equals(branch.commit().sha())

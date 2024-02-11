@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class Repository {
-    private Owner owner;
     private String name;
+    private Owner owner;
+
 
     private boolean fork;
     private List<Branch>branches;
