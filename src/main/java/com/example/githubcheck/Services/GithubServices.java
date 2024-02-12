@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
 import java.util.List;
 
 
@@ -45,16 +44,11 @@ public class GithubServices {
                 .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {})
                 .flatMap(repositories ->
                         Flux.fromIterable(repositories)
-                                .filter(repository -> !repository.isFork())
+                                .filter(repository -> !repository.fork())
                                 .flatMap(repository ->
-                                        this.getBranchesForRepository(username, repository.getName())
+                                        this.getBranchesForRepository(username, repository.name())
                                                 .collectList()
-
-
-                                                .map(branches -> {
-                                                    repository.setBranches(branches);
-                                                    return repository;
-                                                })
+                                                .map(branches -> new Repository(repository.name(), repository.owner(), repository.fork(), branches))
                                 )
                                 .collectList()
                 );

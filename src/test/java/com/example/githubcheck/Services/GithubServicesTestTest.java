@@ -41,10 +41,10 @@ class GithubServicesTestTest {
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
                         .anyMatch(repository ->
-                                "octocat.github.io".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                        !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
+                                "octocat.github.io".equals(repository.name()) &&
+                                "octocat".equals(repository.owner().login()) &&
+                                        !repository.fork() &&
+                                        repository.branches().stream().anyMatch(branch ->
                                                 "gh-pages".equals(branch.name()) &&
                                                         "c0e4a095428f36b81f0bd4239d353f71918cbef3".equals(branch.commit().sha())
                                         )
@@ -66,10 +66,10 @@ class GithubServicesTestTest {
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
                         .anyMatch(repository ->
-                                "Hello-World".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                        !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
+                                "Hello-World".equals(repository.name()) &&
+                                "octocat".equals(repository.owner().login()) &&
+                                        !repository.fork() &&
+                                        repository.branches().stream().anyMatch(branch ->
                                                 "master".equals(branch.name()) &&
                                                         "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d".equals(branch.commit().sha())
                                         )
@@ -90,10 +90,10 @@ class GithubServicesTestTest {
         assert githubRepositories != null;
         StepVerifier.create(githubRepositories)
                 .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->"Spoon-Knife".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
+                        .anyMatch(repository ->"Spoon-Knife".equals(repository.name()) &&
+                                "octocat".equals(repository.owner().login()) &&
+                                !repository.fork() &&
+                                        repository.branches().stream().anyMatch(branch ->
                                                 "change-the-title".equals(branch.name()) &&
                                                         "f439fc5710cd87a4025247e8f75901cdadf5333d".equals(branch.commit().sha())
                                         )
