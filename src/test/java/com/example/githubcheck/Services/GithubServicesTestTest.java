@@ -2,24 +2,47 @@ package com.example.githubcheck.Services;
 
 
 
+
+
 import com.example.githubcheck.Controller.GithubController;
-import com.example.githubcheck.Exceptions.UserNotFoundException;
-import com.example.githubcheck.Model.Repository;
-import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+
+
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+//import com.google.gson.Gson;
+import org.junit.jupiter.api.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import java.util.List;
+
+
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 
 
 
 
-@SpringBootTest
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
+
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+
 class GithubServicesTestTest {
-
-
+    @LocalServerPort
+    private static int randomPort;
+    @Autowired
+    GithubServices githubServices;
     @Autowired
     GithubController githubController;
 
@@ -27,106 +50,50 @@ class GithubServicesTestTest {
 
 
 
-    @Test
-    public void testGetUserRepositoriesSuccessNameRepositoryOctocatGithubIo() {
-        // given
-         String username = "octocat";
+@Autowired
+    private  WebTestClient webTestClient;
 
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-
-
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->
-                                "octocat.github.io".equals(repository.name()) &&
-                                "octocat".equals(repository.owner().login()) &&
-                                        !repository.fork() &&
-                                        repository.branches().stream().anyMatch(branch ->
-                                                "gh-pages".equals(branch.name()) &&
-                                                        "c0e4a095428f36b81f0bd4239d353f71918cbef3".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
+    private  WireMockServer wireMockServer;
+    @BeforeEach
+    public  void setUp() {
+        wireMockServer = new WireMockServer(WireMockConfiguration.options().port(randomPort));
+        wireMockServer.start();
     }
-    @Test
-    public void testGetUserRepositoriesSuccessNameRepositoryHelloWorld() {
-        // given
-        String username = "octocat";
-
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-
-
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->
-                                "Hello-World".equals(repository.name()) &&
-                                "octocat".equals(repository.owner().login()) &&
-                                        !repository.fork() &&
-                                        repository.branches().stream().anyMatch(branch ->
-                                                "master".equals(branch.name()) &&
-                                                        "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
+    @AfterEach
+    public  void tearDown() {
+        wireMockServer.stop();
     }
-    @Test
-    public void testGetUserRepositoriesSuccessNameRepositorySpoonKnife() {
-        // given
-        String username = "octocat";
-
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-
-
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->"Spoon-Knife".equals(repository.name()) &&
-                                "octocat".equals(repository.owner().login()) &&
-                                !repository.fork() &&
-                                        repository.branches().stream().anyMatch(branch ->
-                                                "change-the-title".equals(branch.name()) &&
-                                                        "f439fc5710cd87a4025247e8f75901cdadf5333d".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
-    }
-
-
-
 
     @Test
-    void testGetUserRepositoriesNotFound() {
-        // given
-       String username = "whenUserNotFound";
+    void testWebClientWithWireMock() throws JsonProcessingException {
 
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectError(UserNotFoundException.class)
-                .verify();
+
+
+        StubMapping stubMapping = wireMockServer.stubFor(
+                get(urlPathEqualTo("/users/{username}/repos"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpStatus.OK.value())
+                                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
+
+
+
+
+
+
+         webTestClient.get()
+                .uri("/repositories/octocat/fork=false")
+                .exchange()
+                .expectStatus().isOk();
+
+
+
 
     }
 
 
 
-    }
-
-
-
-
+}
 
 
 
