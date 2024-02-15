@@ -2,22 +2,27 @@ package com.example.githubcheck.Services;
 
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
+
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,20 +31,19 @@ public class GithubServicesTestTest {
     @LocalServerPort
     private int port;
 
-    private WireMockServer wireMockServer;
+    private static WireMockServer wireMockServer;
     @Autowired
     WebTestClient webTestClient;
 
 
+    @RegisterExtension
+    static WireMockExtension wireMockServers = WireMockExtension.newInstance()
+            .options(wireMockConfig().dynamicPort())
+            .build();
 
-
-    @BeforeEach
-    public void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.options().port(1111));
-        wireMockServer.start();
-        webTestClient = WebTestClient.bindToServer()
-                .baseUrl("http://localhost:" + wireMockServer.port())
-                .build();
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("baseUrl",wireMockServers::baseUrl);
 
 
     }
@@ -51,8 +55,9 @@ public class GithubServicesTestTest {
 
     @Test
     public void testExternalApi() {
+        webTestClient.options().uri(wireMockServers.baseUrl());
 
-        StubMapping stubMapping = wireMockServer.stubFor(get(urlPathEqualTo("/api/endpoint"))
+        StubMapping stubMapping = wireMockServers.stubFor(get(urlPathEqualTo("/users/octocat/repos"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -60,9 +65,11 @@ public class GithubServicesTestTest {
         System.out.println(stubMapping.getRequest());
 
         webTestClient.get()
-                .uri("/api/endpoint")
+                .uri("/repositories/octocat/fork=false")
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.message").isEqualTo("Hello from external server!");
 
 
     }
