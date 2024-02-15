@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 
 
@@ -29,48 +30,51 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 @AutoConfigureWebTestClient
 public class GithubServicesTestTest {
     @LocalServerPort
-    private int port;
+    private static int port;
 
-    private static WireMockServer wireMockServer;
+
     @Autowired
     WebTestClient webTestClient;
 
 
     @RegisterExtension
-    static WireMockExtension wireMockServers = WireMockExtension.newInstance()
-            .options(wireMockConfig().dynamicPort())
+    static WireMockExtension wireMockServer = WireMockExtension.newInstance()
+            .options(wireMockConfig().port(port))
             .build();
+
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("baseUrl",wireMockServers::baseUrl);
-
+        registry.add("baseUrl",wireMockServer::baseUrl);
 
     }
 
-    @AfterEach
-    public void tearDown() {
-        wireMockServer.stop();
-    }
+
+
+
 
     @Test
     public void testExternalApi() {
-        webTestClient.options().uri(wireMockServers.baseUrl());
+        while (true) {
 
-        StubMapping stubMapping = wireMockServers.stubFor(get(urlPathEqualTo("/users/octocat/repos"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                        .withBody("{\"message\": \"Hello from external server!\"}")));
-        System.out.println(stubMapping.getRequest());
+            webTestClient.options().uri(wireMockServer.baseUrl());
+            System.out.println(wireMockServer.getPort());
 
-        webTestClient.get()
-                .uri("/repositories/octocat/fork=false")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Hello from external server!");
+            StubMapping stubMapping = wireMockServer.stubFor(get(urlPathEqualTo("/users/octocat/repos"))
+                    .willReturn(aResponse()
+                            .withStatus(HttpStatus.OK.value())
+                            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                            .withBody(hepler.sampleGithubRepositoryJson())));
+            System.out.println(stubMapping.getResponse());
 
+            webTestClient.get()
+                    .uri("/repositories/octocat/fork=false")
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .jsonPath("$.message").isEqualTo("Hello from external server!");
+
+        }
 
     }
 
