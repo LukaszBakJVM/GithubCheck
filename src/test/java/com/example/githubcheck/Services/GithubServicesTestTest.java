@@ -21,6 +21,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 public class GithubServicesTestTest {
@@ -49,7 +50,7 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testExternalApi()  {
+    public void testGetUserRepositoriesSuccess()  {
 
 
             webTestClient.options().uri(wireMockServer.baseUrl());
@@ -67,18 +68,15 @@ public class GithubServicesTestTest {
                             .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
 
 
-
-
-            webTestClient.get()
-                    .uri("/repositories/octocat/fork=false")
-                    .exchange()
-                    .expectStatus().isOk();
-
-
+        webTestClient.get()
+                .uri("/repositories/octocat/fork=false")
+                .exchange()
+                .expectStatus().isOk();
+       // assertThat().as("Wrong response status code").isEqualTo(200);
 
 
 
-        }
+    }
 
 
 
