@@ -1,15 +1,10 @@
 package com.example.githubcheck.Services;
 
 
-import com.github.tomakehurst.wiremock.WireMockServer;
+
 
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +49,7 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testExternalApi() throws InterruptedException {
+    public void testExternalApi()  {
 
 
             webTestClient.options().uri(wireMockServer.baseUrl());
@@ -66,20 +61,20 @@ public class GithubServicesTestTest {
                             .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
 
 
-            wireMockServer.stubFor(get(urlPathEqualTo("/repos/octocat/hello-worId/branches"))
+            wireMockServer.stubFor(get(urlPathEqualTo("/repos/octocat/git-consortium/branches"))
                     .willReturn(aResponse()
                             .withStatus(HttpStatus.OK.value())
                             .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
 
 
-            ;
 
-         /*   webTestClient.get()
+
+            webTestClient.get()
                     .uri("/repositories/octocat/fork=false")
                     .exchange()
-                    .expectStatus().isOk()
-                    .expectBody()
-                    .jsonPath("$.message").isEqualTo("Hello from external server!");*/
+                    .expectStatus().isOk();
+
+
 
 
 
