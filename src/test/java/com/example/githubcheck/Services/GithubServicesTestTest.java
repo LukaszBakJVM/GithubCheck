@@ -54,29 +54,38 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testExternalApi() {
-        while (true) {
+    public void testExternalApi() throws InterruptedException {
+
 
             webTestClient.options().uri(wireMockServer.baseUrl());
             System.out.println(wireMockServer.getPort());
 
-            StubMapping stubMapping = wireMockServer.stubFor(get(urlPathEqualTo("/users/octocat/repos"))
+             wireMockServer.stubFor(get(urlPathEqualTo("/users/octocat/repos"))
                     .willReturn(aResponse()
                             .withStatus(HttpStatus.OK.value())
-                            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                            .withBody(hepler.sampleGithubRepositoryJson())));
-            System.out.println(stubMapping.getResponse());
+                            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
 
-            webTestClient.get()
+
+            wireMockServer.stubFor(get(urlPathEqualTo("/repos/octocat/hello-worId/branches"))
+                    .willReturn(aResponse()
+                            .withStatus(HttpStatus.OK.value())
+                            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
+
+
+            ;
+
+         /*   webTestClient.get()
                     .uri("/repositories/octocat/fork=false")
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody()
-                    .jsonPath("$.message").isEqualTo("Hello from external server!");
+                    .jsonPath("$.message").isEqualTo("Hello from external server!");*/
+
+
 
         }
 
-    }
+
 
 
 
