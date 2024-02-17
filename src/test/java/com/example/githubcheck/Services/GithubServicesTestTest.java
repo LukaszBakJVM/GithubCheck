@@ -17,7 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import java.util.Arrays;
+
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 
@@ -59,7 +59,7 @@ public class GithubServicesTestTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .json(Arrays.toString(Response.testData));
+                .json(Response.testData());
 
     }
     @Test
