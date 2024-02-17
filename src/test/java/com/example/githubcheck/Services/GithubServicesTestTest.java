@@ -48,17 +48,18 @@ public class GithubServicesTestTest {
     public void testGetUserRepositoriesSuccess() {
 
 
+        String username = "octocat";
+
+
         webTestClient.get()
-                .uri("/repositories/octocat/fork=false")
+                .uri("/repositories/"+username+"/fork=false")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .json(Arrays.toString(Response.testData));
 
-
     }
-
 
     @Test
     public void testGetUserRepositoriesNotFound() {
