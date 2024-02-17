@@ -47,7 +47,7 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testGetUserRepositoriesSuccess() {
+    public void testGetUserRepositoriesSuccessJson() {
 
 
         String username = "octocat";
