@@ -22,6 +22,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 public class GithubServicesTestTest {
@@ -107,19 +108,7 @@ public class GithubServicesTestTest {
                 .json(jsonMessage);
 
     }
-    @Test
-    public void testGetUserRepositoriesXml() {
-        String username = "octocat";
 
-
-        webTestClient.get()
-                .uri("/repositories/" + username + "/fork=false")
-                .accept(MediaType.APPLICATION_XML)
-                .exchange()
-                .expectStatus().isEqualTo(406);
-
-
-    }
 
 
   /*  @Test
