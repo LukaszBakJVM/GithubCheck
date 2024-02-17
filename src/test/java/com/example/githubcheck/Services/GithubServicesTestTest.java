@@ -106,13 +106,23 @@ public class GithubServicesTestTest {
                 .expectBody()
                 .json(jsonMessage);
 
+    }
+    @Test
+    public void testGetUserRepositoriesXml() {
+        String username = "octocat";
 
+
+        webTestClient.get()
+                .uri("/repositories/" + username + "/fork=false")
+                .accept(MediaType.APPLICATION_XML)
+                .exchange()
+                .expectStatus().isEqualTo(406);
 
 
     }
 
 
- /*   @Test
+  /*  @Test
   public void recordWiremock() throws InterruptedException {
         System.out.println(wireMockServer.getPort());
         while (true) {

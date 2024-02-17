@@ -1,0 +1,36 @@
+{
+  "id" : "c2e97a6d-3a7f-459d-930b-3e64f4460aba",
+  "name" : "users_octocat_repos",
+  "request" : {
+    "url" : "/users/octocat/repos",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 415,
+    "body" : "{\"message\":\"Unsupported 'Accept' header: 'application/xml'. Must accept 'application/json'.\",\"documentation_url\":\"https://docs.github.com/v3/media\"}",
+    "headers" : {
+      "X-RateLimit-Resource" : "core",
+      "Server" : "GitHub.com",
+      "X-RateLimit-Used" : "1",
+      "Access-Control-Allow-Origin" : "*",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1708192242",
+      "Date" : "Sat, 17 Feb 2024 16:50:43 GMT",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "59",
+      "X-GitHub-Media-Type" : "unknown",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-RateLimit-Limit" : "60",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "C068:EB573:4876FFA:4952B82:65D0E3E2",
+      "Content-Type" : "application/json; charset=utf-8"
+    }
+  },
+  "uuid" : "c2e97a6d-3a7f-459d-930b-3e64f4460aba",
+  "persistent" : true,
+  "insertionIndex" : 19
+}
