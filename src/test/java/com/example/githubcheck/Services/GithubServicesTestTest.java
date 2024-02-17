@@ -77,8 +77,25 @@ public class GithubServicesTestTest {
 
 
     }
+    @Test
+    public void testGetUserRepositoriesForbidden() {
+        String username = "LukaszBakJVM";
 
-   /* @Test
+
+
+        webTestClient.get()
+                .uri("/repositories/" + username + "/fork=false")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isForbidden();
+
+
+
+
+    }
+
+
+ /*   @Test
   public void recordWiremock() throws InterruptedException {
         System.out.println(wireMockServer.getPort());
         while (true) {
