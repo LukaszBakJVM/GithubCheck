@@ -47,27 +47,17 @@ public class GithubServicesTestTest {
     static WireMockExtension wireMockServer = WireMockExtension.newInstance()
             .options(wireMockConfig().port(dynamicPort))
             .build();
-  /*  @BeforeAll
-    static void setUp() {
-        wireMockServer.getPort();
-         WebTestClient.bindToServer().baseUrl(wireMockServer.baseUrl());
-    }*/
-
 
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("baseUrl",wireMockServer::baseUrl);
+        registry.add("baseUrl", wireMockServer::baseUrl);
 
     }
 
 
-
-
-
-
     @Test
-    public void testGetUserRepositoriesSuccess()  {
+    public void testGetUserRepositoriesSuccess() {
         List<String> expectedRepositories = Arrays.asList(
                 "{\"name\":\"octocat.github.io\",\"owner\":{\"login\":\"octocat\"},\"fork\":false,\"branches\":[{\"name\":\"gh-pages\",\"commit\":{\"sha\":\"c0e4a095428f36b81f0bd4239d353f71918cbef3\"}},{\"name\":\"master\",\"commit\":{\"sha\":\"3a9796cf19902af0f7e677391b340f1ae4128433\"}}]}",
                 "{\"name\":\"git-consortium\",\"owner\":{\"login\":\"octocat\"},\"fork\":false,\"branches\":[{\"name\":\"master\",\"commit\":{\"sha\":\"b33a9c7c02ad93f621fa38f0e9fc9e867e12fa0e\"}}]}",
@@ -99,52 +89,41 @@ public class GithubServicesTestTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .json(Arrays.toString(expectedRepositories.toArray(new String[0])));
-        ;
-        System.out.println(json.returnResult().getResponseBody().toString());
 
 
     }
 
 
     @Test
-    public void testGetUserRepositoriesNotFound()  {
+    public void testGetUserRepositoriesNotFound() {
         String username = "whenUserNotFoun";
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/users/"+username+"/repos"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/users/" + username + "/repos"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.NOT_FOUND.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
 
 
         webTestClient.get()
-                .uri("/repositories/"+username+"/fork=false")
+                .uri("/repositories/" + username + "/fork=false")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(String.class)
-                .isEqualTo("User "+username+" not found");
-
-    }
-   @Test
-    public void recordWiremock() throws InterruptedException {
-       System.out.println(wireMockServer.getPort());
-       while (true) {
-           Thread.sleep(4000);
-       }
-   }
-
-
-
-
-
-
-
-
-
-
+                .isEqualTo("User " + username + " not found");
 
 
     }
+
+   /* @Test
+  public void recordWiremock() throws InterruptedException {
+        System.out.println(wireMockServer.getPort());
+        while (true) {
+            Thread.sleep(4000);
+        }
+    }*/
+}
+
 
 
 
