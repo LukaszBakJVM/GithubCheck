@@ -4,6 +4,7 @@ package com.example.githubcheck.Services;
 
 
 
+import com.example.githubcheck.Model.Repository;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -58,6 +59,21 @@ public class GithubServicesTestTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .json(Arrays.toString(Response.testData));
+
+    }
+    @Test
+    public void testGetUserRepositoriesSuccessSize6() {
+
+
+        String username = "octocat";
+
+
+        webTestClient.get()
+                .uri("/repositories/"+username+"/fork=false")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(Repository.class).hasSize(6);
 
     }
 
