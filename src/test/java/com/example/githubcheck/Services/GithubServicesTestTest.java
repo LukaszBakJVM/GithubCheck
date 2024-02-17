@@ -80,14 +80,15 @@ public class GithubServicesTestTest {
     @Test
     public void testGetUserRepositoriesForbidden() {
         String username = "LukaszBakJVM";
-
-
+        String jsonMessage = "{\"message\": \"403 FORBIDDEN\"}";
 
         webTestClient.get()
                 .uri("/repositories/" + username + "/fork=false")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isForbidden();
+                .expectStatus().isForbidden()
+                .expectBody()
+                .json(jsonMessage);
 
 
 

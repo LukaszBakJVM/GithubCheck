@@ -25,9 +25,11 @@ public class ExceptionsController {
         return response;
     }
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<?> handleResponseStatusException(ResponseStatusException ex) {
-        HttpStatusCode statusCode = ex.getStatusCode();
-        return ResponseEntity.status(statusCode).build();
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", ex.getStatusCode().value());
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode()).body(response);
     }
 
 
