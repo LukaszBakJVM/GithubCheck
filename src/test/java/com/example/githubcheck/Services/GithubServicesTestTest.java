@@ -5,8 +5,8 @@ package com.example.githubcheck.Services;
 
 
 import com.example.githubcheck.Model.Repository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -22,7 +22,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 
-import java.util.List;
+
+
+
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
@@ -53,9 +55,8 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testGetUserRepositoriesSuccessJson() throws JsonProcessingException {
-        List<Repository> repositories = Response.loadRepositories();
-        String jsonData = new ObjectMapper().writeValueAsString(repositories);
+    public void testGetUserRepositoriesSuccessJson() {
+
 
 
 
@@ -69,7 +70,7 @@ public class GithubServicesTestTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .json(jsonData);
+                .json(Response.jsonData);
 
     }
     @Test
