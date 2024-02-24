@@ -1,8 +1,6 @@
 package com.example.githubcheck.Services;
 
 
-
-
 import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Branch;
 import com.example.githubcheck.Model.Repository;
@@ -15,8 +13,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.util.List;
 
+import java.util.List;
 
 
 @Service
@@ -41,7 +39,8 @@ public class GithubServices {
                     }
                     return Mono.error(new ResponseStatusException(response.statusCode()));
                 })
-                .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Repository>>() {
+                })
                 .flatMap(repositories ->
                         Flux.fromIterable(repositories)
                                 .filter(repository -> !repository.fork())
@@ -54,7 +53,7 @@ public class GithubServices {
                 );
     }
 
-    private Flux<Branch>getBranchesForRepository(String username, String repositoryName) {
+    private Flux<Branch> getBranchesForRepository(String username, String repositoryName) {
         return webClient
                 .get()
                 .uri("/repos/{username}/{repositoryName}/branches", username, repositoryName)

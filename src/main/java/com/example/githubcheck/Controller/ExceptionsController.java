@@ -22,6 +22,7 @@ public class ExceptionsController {
         response.put("message", ex.getMessage());
         return response;
     }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
         Map<String, Object> response = new HashMap<>();

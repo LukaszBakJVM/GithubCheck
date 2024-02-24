@@ -13,8 +13,8 @@ import java.util.List;
 
 public class Response {
 
-   private static final List<Repository> repositories = loadRepositories();
-  static   String jsonData;
+    private static final List<Repository> repositories = loadRepositories();
+    static String jsonData;
 
     static {
         try {
@@ -25,7 +25,7 @@ public class Response {
     }
 
 
-    private   static List<Repository> loadRepositories()  {
+    private static List<Repository> loadRepositories() {
         ObjectMapper objectMapper = new ObjectMapper();
         Resource resource = new ClassPathResource("response.json");
         try {
