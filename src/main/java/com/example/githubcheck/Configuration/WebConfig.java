@@ -14,8 +14,7 @@ public class WebConfig {
 
     @Bean
     public WebClient.Builder webClientBuilder() {
-        return WebClient.builder()
-                .baseUrl(baseUrl);
+        return WebClient.builder().baseUrl(baseUrl);
     }
 
 
