@@ -1,6 +1,7 @@
 package com.example.githubcheck.Controller;
 
 
+import com.example.githubcheck.Dto.RepositoryDto;
 import com.example.githubcheck.Model.Repository;
 import com.example.githubcheck.Services.GithubServices;
 
@@ -22,7 +23,7 @@ public class GithubController {
     }
 
     @GetMapping("/{username}/fork=false")
-    public ResponseEntity<Mono<List<Repository>>> getGithubRepositories(@PathVariable String username) {
+    public ResponseEntity<Mono<List<RepositoryDto>>> getGithubRepositories(@PathVariable String username) {
         return ResponseEntity.ok(services.getUserRepositories(username));
 
 
