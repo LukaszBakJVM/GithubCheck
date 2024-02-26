@@ -17,18 +17,16 @@ public class Mapper {
 
 
 
-        return new RepositoryDto(repository.name(), repository.owner(), repository.fork());
+        return new RepositoryDto(repository.name(), repository.owner(), repository.fork(),repository.branches());
     }
 
     public BranchDto fromBranchDto(Branch branch) {
         return new BranchDto(branch.name(), branch.commit());
     }
-  public Record RepositoryDto  (Repository repository){
-      List<BranchDto> list = repository.branches().stream().map(this::branchDto).toList();
-      return new RepositoryDto(repository.name(),repository.owner(),repository.fork());
 
 
-    }
+
+
     public BranchDto branchDto(Branch branch){
         return new BranchDto(branch.name(), branch.commit());
     }
