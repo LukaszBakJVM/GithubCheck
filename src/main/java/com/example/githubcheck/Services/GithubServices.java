@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -36,15 +37,15 @@ public class GithubServices {
                 return Mono.error(new UserNotFoundException("User " + username + " not found"));
             }
             return Mono.error(new ResponseStatusException(response.statusCode()));
-        }) .bodyToFlux(Repository.class) // Używaj Repository
+        }) .bodyToFlux(Repository.class)
                 .filter(repository -> !repository.fork())
-                .flatMap(repository -> this.getBranchesForRepository(username, repository.name())
+                .flatMap(repository -> this.getBranchesForRepository(username, repository.name().toLowerCase(Locale.ROOT))
 
                         .map(branches -> mapper.fromRepositoryDto(new Repository(
                                 repository.name(),
                                 repository.owner(),
                                 repository.fork(),
-                                repository.branches()
+                                branches
 
                         )))
                 )
@@ -53,8 +54,8 @@ public class GithubServices {
     }
 
 
-    private Mono<List<BranchDto>> getBranchesForRepository(String username, String repositoryName) {
-        return webClient.get().uri("/repos/{username}/{repositoryName}/branches", username, repositoryName).retrieve().bodyToFlux(BranchDto.class).collectList();
+    private Mono<List<Branch>> getBranchesForRepository(String username, String repositoryName) {
+        return webClient.get().uri("/repos/{username}/{repositoryName}/branches", username, repositoryName).retrieve().bodyToFlux(Branch.class).collectList();
 
     }
 }
