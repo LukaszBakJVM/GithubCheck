@@ -1,4 +1,4 @@
 package com.example.githubcheck.Dto;
 
-public record OwnerDto (String loginDto) {
+public record OwnerDto (String login) {
 }
