@@ -9,17 +9,17 @@ import java.util.List;
 
 @Service
 public class Mapper {
-    public RepositoryDto fromRepositoryDto(Repository repository) {
-        List<BranchDto> list = repository.branches().stream().map(this::fromBranchDto).findFirst().stream().toList();
-        OwnerDto ownerDto = fromOwnerDto(repository.owner());
+    public RepositoryDto fromRepositoryToDto(Repository repository) {
+        List<BranchDto> list = repository.branches().stream().map(this::fromBranchToDto).findFirst().stream().toList();
+        OwnerDto ownerDto = fromOwnerToDto(repository.owner());
         return new RepositoryDto(repository.name(), ownerDto, repository.fork(), list);
     }
 
-    private BranchDto fromBranchDto(Branch branch) {
-        return new BranchDto(branch.name(), branch.commit().sha());
+    private BranchDto fromBranchToDto(Branch branch) {
+        return new BranchDto(branch.name(), branch.commit());
     }
 
-    private OwnerDto fromOwnerDto(Owner owner) {
+    private OwnerDto fromOwnerToDto(Owner owner) {
         return new OwnerDto(owner.login());
     }
 
