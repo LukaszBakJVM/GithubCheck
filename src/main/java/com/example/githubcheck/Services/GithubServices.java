@@ -1,7 +1,6 @@
 package com.example.githubcheck.Services;
 
 
-import com.example.githubcheck.Dto.BranchDto;
 import com.example.githubcheck.Dto.Mapper;
 import com.example.githubcheck.Dto.RepositoryDto;
 import com.example.githubcheck.Exceptions.UserNotFoundException;
@@ -15,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Locale;
 
 
 @Service
@@ -37,19 +35,9 @@ public class GithubServices {
                 return Mono.error(new UserNotFoundException("User " + username + " not found"));
             }
             return Mono.error(new ResponseStatusException(response.statusCode()));
-        }) .bodyToFlux(Repository.class)
-                .filter(repository -> !repository.fork())
-                .flatMap(repository -> this.getBranchesForRepository(username, repository.name())
+        }).bodyToFlux(Repository.class).filter(repository -> !repository.fork()).flatMap(repository -> this.getBranchesForRepository(username, repository.name()).map(branches -> mapper.fromRepositoryDto(new Repository(repository.name(), repository.owner(), repository.fork(), branches
 
-                        .map(branches -> mapper.fromRepositoryDto(new Repository(
-                                repository.name(),
-                                repository.owner(),
-                                repository.fork(),
-                                branches
-
-                        )))
-                )
-                .collectList();
+        )))).collectList();
 
     }
 
