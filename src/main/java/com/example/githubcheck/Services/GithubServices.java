@@ -35,7 +35,7 @@ public class GithubServices {
                 return Mono.error(new UserNotFoundException("User " + username + " not found"));
             }
             return Mono.error(new ResponseStatusException(response.statusCode()));
-        }).bodyToFlux(Repository.class).filter(repository -> !repository.fork()).flatMap(repository -> this.getBranchesForRepository(username, repository.name()).map(branches -> mapper.fromRepositoryDto(new Repository(repository.name(), repository.owner(), repository.fork(), branches
+        }).bodyToFlux(Repository.class).filter(repository -> !repository.fork()).flatMap(repository -> this.getBranchesForRepository(username, repository.name()).map(branches -> mapper.fromRepositoryToDto(new Repository(repository.name(), repository.owner(), repository.fork(), branches
 
         )))).collectList();
 
