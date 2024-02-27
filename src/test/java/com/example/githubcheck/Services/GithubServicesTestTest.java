@@ -1,128 +1,92 @@
 package com.example.githubcheck.Services;
 
 
-
-import com.example.githubcheck.Controller.GithubController;
-import com.example.githubcheck.Exceptions.UserNotFoundException;
 import com.example.githubcheck.Model.Repository;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import java.util.List;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 
-
-
-
-@SpringBootTest
-class GithubServicesTestTest {
-
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+public class GithubServicesTestTest {
+    @LocalServerPort
+    private static int dynamicPort;
+    @RegisterExtension
+    static WireMockExtension wireMockServer = WireMockExtension.newInstance().options(wireMockConfig().port(dynamicPort)).build();
     @Autowired
-    GithubController githubController;
+    WebTestClient webTestClient;
 
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("baseUrl", wireMockServer::baseUrl);
 
-
-
-
-    @Test
-    public void testGetUserRepositoriesSuccessNameRepositoryOctocatGithubIo() {
-        // given
-         String username = "octocat";
-
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-
-
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->
-                                "octocat.github.io".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                        !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
-                                                "gh-pages".equals(branch.name()) &&
-                                                        "c0e4a095428f36b81f0bd4239d353f71918cbef3".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
     }
+
+
     @Test
-    public void testGetUserRepositoriesSuccessNameRepositoryHelloWorld() {
-        // given
+    public void testGetUserRepositoriesSuccessJson() {
+
+
         String username = "octocat";
 
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
 
+        webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectBody().json(Response.jsonData);
 
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->
-                                "Hello-World".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                        !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
-                                                "master".equals(branch.name()) &&
-                                                        "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
     }
+
     @Test
-    public void testGetUserRepositoriesSuccessNameRepositorySpoonKnife() {
-        // given
+    public void testGetUserRepositoriesSuccessSize6() {
+
+
         String username = "octocat";
 
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
 
+        webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectBodyList(Repository.class).hasSize(6);
 
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectNextMatches(repositories -> repositories.stream()
-                        .anyMatch(repository ->"Spoon-Knife".equals(repository.getName()) &&
-                                "octocat".equals(repository.getOwner().login()) &&
-                                !repository.isFork() &&
-                                        repository.getBranches().stream().anyMatch(branch ->
-                                                "change-the-title".equals(branch.name()) &&
-                                                        "f439fc5710cd87a4025247e8f75901cdadf5333d".equals(branch.commit().sha())
-                                        )
-                        ))
-                .expectComplete()
-                .verify();
     }
-
-
-
 
     @Test
-    void testGetUserRepositoriesNotFound() {
-        // given
-       String username = "whenUserNotFound";
+    public void testGetUserRepositoriesNotFound() {
+        String username = "whenUserNotFound";
+        String jsonMessage = "{\"message\": \"User whenUserNotFound not found\"}";
 
-        // when
-        Mono<List<Repository>> githubRepositories = githubController.getGithubRepositories(username).getBody();
-        // then
-        assert githubRepositories != null;
-        StepVerifier.create(githubRepositories)
-                .expectError(UserNotFoundException.class)
-                .verify();
+
+        webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isNotFound().expectBody().json(jsonMessage);
+
+
+    }
+
+    @Test
+    public void testGetUserRepositoriesForbidden() {
+        String username = "LukaszBakJVM";
+        String jsonMessage = "{\"message\": \"403 FORBIDDEN\"}";
+
+        webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isForbidden().expectBody().json(jsonMessage);
 
     }
 
 
 
-    }
+  /*  @Test
+  public void recordWiremock() throws InterruptedException {
+        System.out.println(wireMockServer.getPort());
+        while (true) {
+            Thread.sleep(4000);
+        }
+    }*/
+}
+
 
 
 
