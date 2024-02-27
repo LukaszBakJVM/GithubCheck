@@ -5,30 +5,22 @@ import com.example.githubcheck.Model.Owner;
 import com.example.githubcheck.Model.Repository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class Mapper {
     public RepositoryDto fromRepositoryDto(Repository repository) {
-
-        List<Branch> list = repository.branches().stream().toList();
-
-
-
-        return new RepositoryDto(repository.name(), repository.owner(), repository.fork(),repository.branches());
+        List<BranchDto> list = repository.branches().stream().map(this::fromBranchDto).findFirst().stream().toList();
+        OwnerDto ownerDto = fromOwnerDto(repository.owner());
+        return new RepositoryDto(repository.name(), ownerDto, repository.fork(), list);
     }
 
-    public BranchDto fromBranchDto(Branch branch) {
-        return new BranchDto(branch.name(), branch.commit());
+    private BranchDto fromBranchDto(Branch branch) {
+        return new BranchDto(branch.name(), branch.commit().sha());
     }
 
-
-
-
-    public BranchDto branchDto(Branch branch){
-        return new BranchDto(branch.name(), branch.commit());
+    private OwnerDto fromOwnerDto(Owner owner) {
+        return new OwnerDto(owner.login());
     }
 
 
