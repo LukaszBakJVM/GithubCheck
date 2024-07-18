@@ -1,7 +1,7 @@
-package com.example.githubcheck.Services;
+package com.example.githubcheck.services;
 
 
-import com.example.githubcheck.Model.Repository;
+import com.example.githubcheck.model.Repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

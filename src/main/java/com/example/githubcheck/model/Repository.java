@@ -1,4 +1,4 @@
-package com.example.githubcheck.Model;
+package com.example.githubcheck.model;
 
 
 import java.util.List;

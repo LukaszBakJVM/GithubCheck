@@ -1,4 +1,4 @@
-package com.example.githubcheck.Configuration;
+package com.example.githubcheck.configuration;
 
 
 import org.springframework.beans.factory.annotation.Value;

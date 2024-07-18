@@ -1,8 +1,8 @@
-package com.example.githubcheck.Controller;
+package com.example.githubcheck.controller;
 
 
-import com.example.githubcheck.Dto.RepositoryDto;
-import com.example.githubcheck.Services.GithubServices;
+import com.example.githubcheck.dto.RepositoryDto;
+import com.example.githubcheck.services.GithubServices;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +25,6 @@ public class GithubController {
     @GetMapping("/{username}/fork=false")
     public ResponseEntity<Mono<List<RepositoryDto>>> getGithubRepositories(@PathVariable String username) {
         return ResponseEntity.ok(services.getUserRepositories(username));
-
 
     }
 }

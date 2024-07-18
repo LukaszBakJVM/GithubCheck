@@ -1,8 +1,8 @@
-package com.example.githubcheck.Dto;
+package com.example.githubcheck.dto;
 
-import com.example.githubcheck.Model.Branch;
-import com.example.githubcheck.Model.Owner;
-import com.example.githubcheck.Model.Repository;
+import com.example.githubcheck.model.Branch;
+import com.example.githubcheck.model.Owner;
+import com.example.githubcheck.model.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

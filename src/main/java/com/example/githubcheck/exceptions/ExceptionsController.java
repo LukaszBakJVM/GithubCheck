@@ -1,7 +1,6 @@
-package com.example.githubcheck.Controller;
+package com.example.githubcheck.exceptions;
 
 
-import com.example.githubcheck.Exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

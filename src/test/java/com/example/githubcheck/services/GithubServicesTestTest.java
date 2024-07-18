@@ -1,7 +1,7 @@
-package com.example.githubcheck.Services;
+package com.example.githubcheck.services;
 
 
-import com.example.githubcheck.Model.Repository;
+import com.example.githubcheck.model.Repository;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -19,7 +19,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class GithubServicesTestTest {
+class GithubServicesTestTest {
     @LocalServerPort
     private static int dynamicPort;
     @RegisterExtension
@@ -35,7 +35,7 @@ public class GithubServicesTestTest {
 
 
     @Test
-    public void testGetUserRepositoriesSuccessJson() {
+     void testGetUserRepositoriesSuccessJson() {
 
 
         String username = "octocat";
@@ -46,7 +46,7 @@ public class GithubServicesTestTest {
     }
 
     @Test
-    public void testGetUserRepositoriesSuccessSize6() {
+    void testGetUserRepositoriesSuccessSize6() {
 
 
         String username = "octocat";
@@ -57,7 +57,7 @@ public class GithubServicesTestTest {
     }
 
     @Test
-    public void testGetUserRepositoriesNotFound() {
+    void testGetUserRepositoriesNotFound() {
         String username = "whenUserNotFound";
         String jsonMessage = "{\"message\": \"User whenUserNotFound not found\"}";
 
@@ -68,7 +68,7 @@ public class GithubServicesTestTest {
     }
 
     @Test
-    public void testGetUserRepositoriesForbidden() {
+    void testGetUserRepositoriesForbidden() {
         String username = "LukaszBakJVM";
         String jsonMessage = "{\"message\": \"403 FORBIDDEN\"}";
 

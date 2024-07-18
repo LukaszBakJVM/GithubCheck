@@ -1,11 +1,11 @@
-package com.example.githubcheck.Services;
+package com.example.githubcheck.services;
 
 
-import com.example.githubcheck.Dto.Mapper;
-import com.example.githubcheck.Dto.RepositoryDto;
-import com.example.githubcheck.Exceptions.UserNotFoundException;
-import com.example.githubcheck.Model.Branch;
-import com.example.githubcheck.Model.Repository;
+import com.example.githubcheck.dto.Mapper;
+import com.example.githubcheck.dto.RepositoryDto;
+import com.example.githubcheck.exceptions.UserNotFoundException;
+import com.example.githubcheck.model.Branch;
+import com.example.githubcheck.model.Repository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;

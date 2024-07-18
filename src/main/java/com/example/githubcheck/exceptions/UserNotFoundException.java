@@ -1,4 +1,4 @@
-package com.example.githubcheck.Exceptions;
+package com.example.githubcheck.exceptions;
 
 
 public class UserNotFoundException extends RuntimeException {
