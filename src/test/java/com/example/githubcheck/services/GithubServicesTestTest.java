@@ -20,6 +20,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 class GithubServicesTestTest {
+
     @LocalServerPort
     private static int dynamicPort;
     @RegisterExtension
