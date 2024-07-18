@@ -17,6 +17,7 @@ public class ExceptionsController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Object> userNotFoundException(UserNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.NOT_FOUND.value());
         response.put("message", ex.getMessage());
         return response;
     }

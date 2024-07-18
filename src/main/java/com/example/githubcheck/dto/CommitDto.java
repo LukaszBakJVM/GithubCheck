@@ -1,4 +1,4 @@
 package com.example.githubcheck.dto;
 
-public record CommitDto(String lastCommitSha) {
+public record CommitDto(String sha) {
 }

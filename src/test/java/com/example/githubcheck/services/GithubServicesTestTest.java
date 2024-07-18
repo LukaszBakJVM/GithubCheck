@@ -59,7 +59,7 @@ class GithubServicesTestTest {
     @Test
     void testGetUserRepositoriesNotFound() {
         String username = "whenUserNotFound";
-        String jsonMessage = "{\"message\": \"User whenUserNotFound not found\"}";
+        String jsonMessage = "{\"status\": 404,\"message\": \"User whenUserNotFound not found\"}";
 
 
         webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isNotFound().expectBody().json(jsonMessage);
