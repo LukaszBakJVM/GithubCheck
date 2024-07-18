@@ -32,7 +32,7 @@ public class GithubServices {
     public Mono<List<RepositoryDto>> getUserRepositories(String username) {
         return webClient.get().uri("/users/{username}/repos", username).header("Accept", "application/json").retrieve().onStatus(HttpStatusCode::is4xxClientError, response -> {
             if (response.statusCode() == HttpStatus.NOT_FOUND) {
-                return Mono.error(new UserNotFoundException("User " + username + " not found"));
+                return Mono.error(new UserNotFoundException(String.format("User  %s  not found", username)));
             }
             return Mono.error(new ResponseStatusException(response.statusCode()));
         }).bodyToFlux(Repository.class).filter(repository -> !repository.fork()).flatMap(repository -> this.getBranchesForRepository(username, repository.name()).map(branches -> mapper.fromRepositoryToDto(new Repository(repository.name(), repository.owner(), repository.fork(), branches
