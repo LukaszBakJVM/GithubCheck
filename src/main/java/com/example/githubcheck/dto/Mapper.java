@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class Mapper {
     public RepositoryDto fromRepositoryToDto(Repository repository) {
-        List<BranchDto> branchDtoList = repository.branches().stream().map(this::fromBranchToDto).findFirst().stream().toList();
+        List<BranchDto> branchDtoList = repository.branches().stream().map(this::fromBranchToDto).toList();
         OwnerDto ownerDto = fromOwnerToDto(repository.owner());
         return new RepositoryDto(repository.name(), ownerDto, repository.fork(), branchDtoList);
     }
