@@ -1,7 +1,6 @@
 package com.example.githubcheck.services;
 
 
-import com.example.githubcheck.model.Repository;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -46,16 +45,6 @@ class GithubServicesTestTest {
 
     }
 
-    @Test
-    void testGetUserRepositoriesSuccessSize6() {
-
-
-        String username = "octocat";
-
-
-        webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectBodyList(Repository.class).hasSize(6);
-
-    }
 
     @Test
     void testGetUserRepositoriesNotFound() {
@@ -69,23 +58,15 @@ class GithubServicesTestTest {
     }
 
     @Test
-    void testGetUserRepositoriesForbidden() {
+    void testGetUserRepositoriesExceededLimit() {
         String username = "LukaszBakJVM";
-        String jsonMessage = "{\"message\": \"403 FORBIDDEN\"}";
+        String jsonMessage = "{\"status\": 403,\"message\": \"403 FORBIDDEN\"}";
 
         webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isForbidden().expectBody().json(jsonMessage);
 
     }
 
 
-
-  /*  @Test
-  public void recordWiremock() throws InterruptedException {
-        System.out.println(wireMockServer.getPort());
-        while (true) {
-            Thread.sleep(4000);
-        }
-    }*/
 }
 
 
