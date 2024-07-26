@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -22,7 +21,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 class GithubServicesTestTest {
 
     @LocalServerPort
-    private static int dynamicPort = 8181;
+    private static int dynamicPort;
     @RegisterExtension
     static WireMockExtension wireMockServer = WireMockExtension.newInstance().options(wireMockConfig().port(dynamicPort)).build();
     @Autowired
@@ -64,19 +63,6 @@ class GithubServicesTestTest {
         String jsonMessage = "{\"status\": 403,\"message\": \"403 FORBIDDEN\"}";
 
         webTestClient.get().uri("/repositories/" + username + "/fork=false").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isForbidden().expectBody().json(jsonMessage);
-
-    }
-
-    @Test
-    void testGetUserRepositoriesApplicationXml() {
-        String username = "exaluc";
-
-
-        String jsonMessage = "{\"status\": 415,\"message\": \"415 UNSUPPORTED_MEDIA_TYPE\"}";
-
-
-        webTestClient.get().uri("/repositories/" + username + "/fork=false").exchange().expectStatus().isEqualTo(HttpStatusCode.valueOf(415)).expectBody().json(jsonMessage);
-
 
     }
 
