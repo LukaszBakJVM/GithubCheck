@@ -29,6 +29,5 @@ public class ExceptionsController {
         response.put("message", ex.getMessage());
         return ResponseEntity.status(ex.getStatusCode()).body(response);
     }
-
-
 }
+

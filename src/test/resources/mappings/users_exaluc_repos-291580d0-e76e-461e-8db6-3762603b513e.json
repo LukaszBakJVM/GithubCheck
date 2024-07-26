@@ -1,0 +1,36 @@
+{
+  "id" : "291580d0-e76e-461e-8db6-3762603b513e",
+  "name" : "users_exaluc_repos",
+  "request" : {
+    "url" : "/users/exaluc/repos",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 415,
+    "body" : "{\"message\":\"Unsupported 'Accept' header: 'application/xml'. Must accept 'application/json'.\",\"documentation_url\":\"https://docs.github.com/v3/media\",\"status\":\"415\"}",
+    "headers" : {
+      "X-RateLimit-Resource" : "core",
+      "Server" : "github.com",
+      "X-RateLimit-Used" : "33",
+      "Access-Control-Allow-Origin" : "*",
+      "X-Content-Type-Options" : "nosniff",
+      "X-RateLimit-Reset" : "1722003310",
+      "Date" : "Fri, 26 Jul 2024 14:11:10 GMT",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "X-Frame-Options" : "deny",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "Access-Control-Expose-Headers" : "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+      "X-RateLimit-Remaining" : "27",
+      "X-GitHub-Media-Type" : "unknown",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-RateLimit-Limit" : "60",
+      "X-XSS-Protection" : "0",
+      "X-GitHub-Request-Id" : "DC28:27C697:3B51F11:3C1A7EE:66A3AE7E",
+      "Content-Type" : "application/json; charset=utf-8"
+    }
+  },
+  "uuid" : "291580d0-e76e-461e-8db6-3762603b513e",
+  "persistent" : true,
+  "insertionIndex" : 21
+}
