@@ -2,13 +2,14 @@ package com.example.githubcheck.services;
 
 
 import com.example.githubcheck.model.Repository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class Response {
@@ -17,20 +18,17 @@ public class Response {
     static String jsonData;
 
     static {
-        try {
-            jsonData = new ObjectMapper().writeValueAsString(repositories);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        Gson gson = new Gson();
+        jsonData = gson.toJson(repositories);
     }
 
-
     private static List<Repository> loadRepositories() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        Gson gson = new Gson();
         Resource resource = new ClassPathResource("response.json");
-        try {
-            return objectMapper.readValue(resource.getInputStream(), new TypeReference<>() {
-            });
+        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream())) {
+            Type listType = new TypeToken<List<Repository>>() {
+            }.getType();
+            return gson.fromJson(reader, listType);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
