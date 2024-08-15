@@ -1,33 +1,24 @@
 package com.example.githubcheck.exceptions;
 
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 public class ExceptionsController {
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> userNotFoundException(UserNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", HttpStatus.NOT_FOUND.value());
-        response.put("message", ex.getMessage());
-        return response;
+    @ResponseStatus(NOT_FOUND)
+    public Error userNotFoundException(UserNotFoundException ex) {
+        return new Error(NOT_FOUND.value(), ex.getMessage());
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", ex.getStatusCode().value());
-        response.put("message", ex.getMessage());
-        return ResponseEntity.status(ex.getStatusCode()).body(response);
+    public Error handleResponseStatusException(ResponseStatusException ex) {
+        return new Error(ex.getStatusCode().value(), ex.getMessage());
     }
 }
 
