@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 
 @RestController
@@ -23,7 +21,7 @@ public class GithubController {
     }
 
     @GetMapping("/{username}/fork=false")
-    public ResponseEntity<Mono<List<RepositoryDto>>> getGithubRepositories(@PathVariable String username) {
+    public ResponseEntity<Flux<RepositoryDto>> getGithubRepositories(@PathVariable String username) {
         return ResponseEntity.ok(services.getUserRepositories(username));
 
     }

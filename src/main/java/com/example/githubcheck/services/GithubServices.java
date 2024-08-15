@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class GithubServices {
     }
 
 
-    public Mono<List<RepositoryDto>> getUserRepositories(String username) {
+    public Flux<RepositoryDto> getUserRepositories(String username) {
         return webClient.get().uri("/users/{username}/repos", username).header("Accept", "application/json").retrieve().onStatus(HttpStatusCode::is4xxClientError, response -> {
             if (response.statusCode() == HttpStatus.NOT_FOUND) {
                 return Mono.error(new UserNotFoundException(String.format("User %s not found", username)));
@@ -37,7 +38,7 @@ public class GithubServices {
             return Mono.error(new ResponseStatusException(response.statusCode()));
         }).bodyToFlux(Repository.class).filter(repository -> !repository.fork()).flatMap(repository -> this.getBranchesForRepository(username, repository.name()).map(branches -> mapper.fromRepositoryToDto(new Repository(repository.name(), repository.owner(), repository.fork(), branches
 
-        )))).collectList();
+        ))));
 
     }
 
